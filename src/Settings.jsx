@@ -57,9 +57,8 @@ function Settings({ sortArray, setSortArray }) {
   return (
     <div className='navBar'>
         
-
         <button onClick={() => generateNewArray(sortArray.length)}>Shuffle</button>
-
+        
         <input
             type='range'
             min='10'

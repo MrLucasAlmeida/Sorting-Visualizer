@@ -1,0 +1,13 @@
+#bars-container {   
+    border-color: black;
+    border-style: solid;
+    border-width: 2px;
+    align-items: center;
+    margin: auto;
+    width: 50%;
+    height: 400px;
+    
+
+
+    
+}
