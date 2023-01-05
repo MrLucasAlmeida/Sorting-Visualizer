@@ -7,15 +7,14 @@ function Settings({ sortArray, setSortArray }) {
 
 
     useEffect(() => {
-        generateNewArray(10);
-        console.log('running again');
+        generateNewArray(25);
     },[]);
 
 
 
     const generateNewArray = (size) => {
         const newArray = Array(size).fill(0).map((x, index) => {
-            return index;
+            return index+2;
         });
         console.log('generated new array');
         setSortArray(shuffle(newArray));
@@ -50,6 +49,24 @@ function Settings({ sortArray, setSortArray }) {
       }
 
 
+    // all sorting algorithms
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -63,17 +80,20 @@ function Settings({ sortArray, setSortArray }) {
             type='range'
             min='10'
             max='50'
+            step='2'
+            defaultValue='30'
             className='slider'
             onInput={() => handleSliderChange()}
             id='myRange'></input>
 
         <button>Visualize!</button>
 
-        <select>
-            <option value='Bubble'>Bubble</option>
-            <option value='Heap'>Heap</option>
+        <div className='custom-select'>
+        <select className='select'>
+            <option value='bubble'>Bubble</option>
+            <option value='heap'>Heap</option>
         </select>
-
+        </div>
 
 
     </div>
