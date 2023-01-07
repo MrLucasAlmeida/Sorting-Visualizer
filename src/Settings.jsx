@@ -5,6 +5,10 @@ import { useEffect } from 'react';
 function Settings({ sortArray, setSortArray }) {
 
 
+    let sleepTime = 20;
+
+
+
 
     useEffect(() => {
         generateNewArray(25);
@@ -22,7 +26,6 @@ function Settings({ sortArray, setSortArray }) {
 
     const handleSliderChange = () => {
         const slider = document.getElementById("myRange");
-        console.log(slider.value);
         generateNewArray(Number(slider.value));
         
     }
@@ -63,52 +66,69 @@ function Settings({ sortArray, setSortArray }) {
     function handleSortSelection() {
         const yourSelect = document.getElementById('select-dropdown');
         const sortSelection = yourSelect.options[yourSelect.selectedIndex].value;
+
+        const slider = document.getElementById("myRange");
+        let sleepTime;
+
         console.log(sortSelection);
+
+
         switch (sortSelection) {
             case 'bubbleSort':
-                bubbleSort(sortArray);
+                sleepTime = 10/Math.pow(Number(slider.value),2);
+                bubbleSort(sortArray,sleepTime);
                 break;
             case 'insertionSort':
-                insertionSort(sortArray);
+                sleepTime = 100/Math.pow(Number(slider.value),4);
+                insertionSort(sortArray,sleepTime);
                 break;
             case 'selectionSort':
-                selectionSort(sortArray);
+                sleepTime = 1000/Math.pow(Number(slider.value),1);
+                selectionSort(sortArray,sleepTime);
                 break;
             case 'quickSort':
-                quickSort(sortArray, 0, sortArray.length - 1);
+                sleepTime = 1/Math.pow(Number(slider.value),2);
+                quickSort(sortArray, 0, sortArray.length - 1,sleepTime);
                 break;
             case 'mergeSort':
-                mergeSort(sortArray,sortArray,0,sortArray.length-1);
+                sleepTime = 400/Math.pow(Number(slider.value),1);
+                mergeSort(sortArray,sortArray,0,sortArray.length-1,sleepTime);
                 break;
             case 'heapSort':
-                heapSort(sortArray);
+                sleepTime = 5000/Math.pow(Number(slider.value),2);
+                heapSort(sortArray,sleepTime);
                 break;
             case 'countingSort':
-                countingSort(sortArray);
+                sleepTime = 1000/Math.pow(Number(slider.value),1);
+                countingSort(sortArray,sleepTime);
                 break;
             case 'radixSort':
-                radixSort(sortArray);
+                sleepTime = 500/Math.pow(Number(slider.value),1);
+                radixSort(sortArray,sleepTime);
                 break;
             case 'bucketSort':
-                bucketSort(sortArray);
+                sleepTime = 10000/Math.pow(Number(slider.value),2);
+                bucketSort(sortArray,sleepTime);
                 break;
             case 'shellSort':
-                shellSort(sortArray);
+                sleepTime = 1000/Math.pow(Number(slider.value),1);
+                shellSort(sortArray,sleepTime);
                 break;
             case 'cocktailSort':
-                cocktailSort(sortArray);
+                sleepTime = 50000/Math.pow(Number(slider.value),3);
+                cocktailSort(sortArray,sleepTime);
                 break;
             case 'combSort':
-                combSort(sortArray);
+                combSort(sortArray,sleepTime);
                 break;
             case 'gnomeSort':
-                gnomeSort(sortArray);
+                gnomeSort(sortArray,sleepTime);
                 break;
             case 'cycleSort':
-                cycleSort(sortArray);
+                cycleSort(sortArray,sleepTime);
                 break;
             case 'pancakeSort':
-                pancakeSort(sortArray);
+                pancakeSort(sortArray,sleepTime);
                 break;
             default:
                 break;
@@ -117,50 +137,52 @@ function Settings({ sortArray, setSortArray }) {
 
 
 
-    // create a quicksort function that updates the sortArray state
-    async function quickSort(array, start, end) {
+    // quicksort
+    async function quickSort(array, start, end, sleepTime) {
         if (start >= end) {
             return;
         }
-        let index = await partition(array, start, end);
-        await quickSort(array, start, index - 1);
-        await quickSort(array, index + 1, end);
+        let index = await partition(array, start, end,sleepTime);
+        await quickSort(array, start, index - 1,sleepTime);
+        await quickSort(array, index + 1, end,sleepTime);
     }
-    // define partition function
-    async function partition(array, start, end) {
+    // partition function
+    async function partition(array, start, end,sleepTime) {
         let pivotIndex = start;
         let pivotValue = array[end];
 
         for (let i = start; i < end; i++) {
             if (array[i] < pivotValue) {
-                await sleep(10);
+                await sleep(20000*sleepTime);
                 [array[i], array[pivotIndex]] = [array[pivotIndex], array[i]];
                 setSortArray([...array]);
                 pivotIndex++;
             }
         }
-        await sleep(10);
+        await sleep(sleepTime);
         [array[pivotIndex], array[end]] = [array[end], array[pivotIndex]];
         setSortArray([...array]);
         return pivotIndex;
     }
 
-    async function mergeSort(array,currArray,start, end) {
+    // mergesort
+    async function mergeSort(array,currArray,start, end,sleepTime) {
         if (currArray.length <= 1) {
             return currArray;
         }
         const middle = Math.floor(currArray.length / 2);
         const left = currArray.slice(0, middle);
         const right = currArray.slice(middle);
-        await sleep(10);
+        await sleep(sleepTime);
         return await merge(
             array,
             start,
-            await mergeSort(array,left, start, middle-1),
-            await mergeSort(array,right,middle,end)
+            await mergeSort(array,left, start, middle-1,sleepTime),
+            await mergeSort(array,right,middle,end,sleepTime),
+            sleepTime
         );
     }
-    async function merge(array, start, arr1, arr2) {
+    async function merge(array, start, arr1, arr2,sleepTime) {
         let p1 = 0;
         let p2 = 0;
         let curr = start;
@@ -177,7 +199,7 @@ function Settings({ sortArray, setSortArray }) {
                 p2++;
             }
             setSortArray([...array]);
-            await sleep(10);
+            await sleep(sleepTime);
             
         }
 
@@ -193,7 +215,7 @@ function Settings({ sortArray, setSortArray }) {
             p2++;
             
         }
-        await sleep(10);
+        await sleep(sleepTime);
         setSortArray([...array]);
         // update state
         
@@ -207,20 +229,20 @@ function Settings({ sortArray, setSortArray }) {
 
 
     // heap sort function
-    async function heapSort(array) {
+    async function heapSort(array,sleepTime) {
         let n = array.length;
         for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
-            await heapify(array, n, i);
+            await heapify(array, n, i,sleepTime);
         }
         for (let i = n - 1; i > 0; i--) {
-            await sleep(10);
+            await sleep(sleepTime);
             [array[0], array[i]] = [array[i], array[0]];
             setSortArray([...array]);
-            await heapify(array, i, 0);
+            await heapify(array, i, 0,sleepTime);
         }
     }
 
-    async function heapify(array, n, i) {
+    async function heapify(array, n, i,sleepTime) {
         let largest = i;
         let l = 2 * i + 1;
         let r = 2 * i + 2;
@@ -231,20 +253,20 @@ function Settings({ sortArray, setSortArray }) {
             largest = r;
         }
         if (largest != i) {
-            await sleep(100);
+            await sleep(sleepTime);
             [array[i], array[largest]] = [array[largest], array[i]];
             setSortArray([...array]);
-            await heapify(array, n, largest);
+            await heapify(array, n, largest,sleepTime);
         }
     }
 
     // bubble sort function
-    async function bubbleSort(array) {
+    async function bubbleSort(array,sleepTime) {
         let n = array.length;
         for (let i = 0; i < n - 1; i++) {
             for (let j = 0; j < n - i - 1; j++) {
                 if (array[j] > array[j + 1]) {
-                    await sleep(10);
+                    await sleep(sleepTime);
                     [array[j], array[j + 1]] = [array[j + 1], array[j]];
                     setSortArray([...array]);
                 }
@@ -255,7 +277,7 @@ function Settings({ sortArray, setSortArray }) {
 
 
     // selection sort
-    async function selectionSort(array) {
+    async function selectionSort(array,sleepTime) {
         let n = array.length;
         for (let i = 0; i < n; i++) {
             let min = i;
@@ -264,7 +286,7 @@ function Settings({ sortArray, setSortArray }) {
                     min = j;
                 }
             }
-            await sleep(30);
+            await sleep(sleepTime);
             [array[i], array[min]] = [array[min], array[i]];
             setSortArray([...array]);
         }
@@ -272,13 +294,13 @@ function Settings({ sortArray, setSortArray }) {
     
 
     // insertion sort
-    async function insertionSort(array) {
+    async function insertionSort(array,sleepTime) {
         let n = array.length;
         for (let i = 1; i < n; i++) {
             let key = array[i];
             let j = i - 1;
             while (j >= 0 && array[j] > key) {
-                await sleep(10);
+                await sleep(sleepTime);
                 array[j + 1] = array[j];
                 setSortArray([...array]);
                 j = j - 1;
@@ -290,7 +312,7 @@ function Settings({ sortArray, setSortArray }) {
 
 
     // counting sort
-    async function countingSort(array) {
+    async function countingSort(array,sleepTime) {
         let n = array.length;
         let output = new Array(n);
         let count = new Array(200).fill(0);
@@ -305,7 +327,7 @@ function Settings({ sortArray, setSortArray }) {
             count[array[i]]--;
         }
         for (let i = 0; i < n; i++) {
-            await sleep(30);
+            await sleep(sleepTime);
             array[i] = output[i];
             setSortArray([...array]);
         }
@@ -314,14 +336,14 @@ function Settings({ sortArray, setSortArray }) {
     
 
     // radix sort
-    async function radixSort(array) {
+    async function radixSort(array,sleepTime) {
         let n = array.length;
         let max = Math.max(...array);
         for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
-            await countSort(array, n, exp);
+            await countSort(array, n, exp,sleepTime);
         }
     }
-    async function countSort(array, n, exp) {
+    async function countSort(array, n, exp,sleepTime) {
         let output = new Array(n);
         let count = new Array(10).fill(0);
         for (let i = 0; i < n; i++) {
@@ -335,7 +357,7 @@ function Settings({ sortArray, setSortArray }) {
             count[Math.floor(array[i] / exp) % 10]--;
         }
         for (let i = 0; i < n; i++) {
-            await sleep(30);
+            await sleep(sleepTime);
             array[i] = output[i];
             setSortArray([...array]);
         }
@@ -343,7 +365,7 @@ function Settings({ sortArray, setSortArray }) {
 
 
     // bucket sort
-    async function bucketSort(array) {
+    async function bucketSort(array,sleepTime) {
         let n = array.length;
         let buckets = new Array(10);
         for (let i = 0; i < buckets.length; i++) {
@@ -354,25 +376,25 @@ function Settings({ sortArray, setSortArray }) {
             buckets[bucketIndex].push(array[i]);
         }
         for (let i = 0; i < buckets.length; i++) {
-            await insertionSortForBucketSort(buckets[i]);
+            await insertionSortForBucketSort(buckets[i],sleepTime);
         }
         let index = 0;
         for (let i = 0; i < buckets.length; i++) {
             for (let j = 0; j < buckets[i].length; j++) {
-                await sleep(30);
+                await sleep(sleepTime);
                 array[index++] = buckets[i][j];
                 setSortArray([...array]);
             }
         }
     }
     // insertion sort for bucket sort
-    async function insertionSortForBucketSort(array) {
+    async function insertionSortForBucketSort(array,sleepTime) {
         let n = array.length;
         for (let i = 1; i < n; i++) {
             let key = array[i];
             let j = i - 1;
             while (j >= 0 && array[j] > key) {
-                await sleep(10);
+                await sleep(sleepTime);
                 array[j + 1] = array[j];
                 j = j - 1;
             }
@@ -381,14 +403,14 @@ function Settings({ sortArray, setSortArray }) {
     }
 
     // shell sort
-    async function shellSort(array) {
+    async function shellSort(array,sleepTime) {
         let n = array.length;
         for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
             for (let i = gap; i < n; i++) {
                 let temp = array[i];
                 let j;
                 for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
-                    await sleep(10);
+                    await sleep(sleepTime);
                     array[j] = array[j - gap];
                     setSortArray([...array]);
                 }
@@ -399,7 +421,7 @@ function Settings({ sortArray, setSortArray }) {
     }
 
     // cocktail sort
-    async function cocktailSort(array) {
+    async function cocktailSort(array,sleepTime) {
         let n = array.length;
         let swapped = true;
         let start = 0;
@@ -408,7 +430,7 @@ function Settings({ sortArray, setSortArray }) {
             swapped = false;
             for (let i = start; i < end; i++) {
                 if (array[i] > array[i + 1]) {
-                    await sleep(10);
+                    await sleep(sleepTime);
                     let temp = array[i];
                     array[i] = array[i + 1];
                     array[i + 1] = temp;
@@ -424,7 +446,7 @@ function Settings({ sortArray, setSortArray }) {
 
             for (let i = end - 1; i >= start; i--) {
                 if (array[i] > array[i + 1]) {
-                    await sleep(10);
+                    await sleep(sleepTime);
                     let temp = array[i];
                     array[i] = array[i + 1];
                     array[i + 1] = temp;
@@ -439,7 +461,7 @@ function Settings({ sortArray, setSortArray }) {
 
 
     // comb sort
-    async function combSort(array) {
+    async function combSort(array,sleepTime) {
         let n = array.length;
         let gap = n;
         let shrink = 1.3;
@@ -452,7 +474,7 @@ function Settings({ sortArray, setSortArray }) {
             swapped = false;
             for (let i = 0; i + gap < n; i++) {
                 if (array[i] > array[i + gap]) {
-                    await sleep(10);
+                    await sleep(sleepTime);
                     let temp = array[i];
                     array[i] = array[i + gap];
                     array[i + gap] = temp;
@@ -466,7 +488,7 @@ function Settings({ sortArray, setSortArray }) {
 
 
     // gnome sort
-    async function gnomeSort(array) {
+    async function gnomeSort(array,sleepTime) {
         let n = array.length;
         let index = 0;
         while (index < n) {
@@ -476,7 +498,7 @@ function Settings({ sortArray, setSortArray }) {
             if (array[index] >= array[index - 1]) {
                 index++;
             } else {
-                await sleep(10);
+                await sleep(sleepTime);
                 let temp = array[index];
                 array[index] = array[index - 1];
                 array[index - 1] = temp;
@@ -486,8 +508,8 @@ function Settings({ sortArray, setSortArray }) {
         }
     }
 
-    // create a cycle sort function that updates the sortArray state
-    async function cycleSort(array) {
+    // cycle sort
+    async function cycleSort(array,sleepTime) {
         let n = array.length;
         for (let cycleStart = 0; cycleStart <= n - 2; cycleStart++) {
             let item = array[cycleStart];
@@ -504,7 +526,7 @@ function Settings({ sortArray, setSortArray }) {
                 pos++;
             }
             if (pos !== cycleStart) {
-                await sleep(10);
+                await sleep(sleepTime);
                 let temp = item;
                 item = array[pos];
                 array[pos] = temp;
@@ -521,7 +543,7 @@ function Settings({ sortArray, setSortArray }) {
                     pos++;
                 }
                 if (item !== array[pos]) {
-                    await sleep(10);
+                    await sleep(sleepTime);
                     let temp = item;
                     item = array[pos];
                     array[pos] = temp;
@@ -533,8 +555,8 @@ function Settings({ sortArray, setSortArray }) {
 
 
 
-    // create a pancake sort function that updates the sortArray state
-    async function pancakeSort(array) {
+    // pancake sort
+    async function pancakeSort(array,sleepTime) {
         let n = array.length;
         for (let i = n; i > 1; i--) {
             let max = 0;
@@ -545,15 +567,15 @@ function Settings({ sortArray, setSortArray }) {
                 }
             }
             if (max !== i - 1) {
-                await flip(array, max);
-                await flip(array, i - 1);
+                await flip(array, max,sleepTime);
+                await flip(array, i - 1,sleepTime);
             }
         }
     }
-    async function flip(array, i) {
+    async function flip(array, i,sleepTime) {
         let start = 0;
         while (start < i) {
-            await sleep(10);
+            await sleep(sleepTime);
             let temp = array[start];
 
             array[start] = array[i];
@@ -579,7 +601,7 @@ function Settings({ sortArray, setSortArray }) {
         <input
             type='range'
             min='10'
-            max='100'
+            max='60'
             step='2'
             defaultValue='30'
             className='slider'
@@ -593,6 +615,7 @@ function Settings({ sortArray, setSortArray }) {
             <option value='quickSort'>QuickSort</option>
             <option value='mergeSort'>MergeSort</option>
             <option value='bubbleSort'>BubbleSort</option>
+            <option value='heapSort'>HeapSort</option>
             <option value='insertionSort'>InsertionSort</option>
             <option value='selectionSort'>SelectionSort</option>
             <option value='countingSort'>CountingSort</option>
