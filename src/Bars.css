@@ -29,6 +29,9 @@
     border-top-left-radius: 0% 50%;
     border-top-right-radius: 0% 50%;
     
-    
-    
+}
+
+.highlighted {
+    background-color: yellow;
+    opacity: 0.5;
 }

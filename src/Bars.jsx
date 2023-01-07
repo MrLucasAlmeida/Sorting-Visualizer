@@ -4,7 +4,7 @@ import {useState, useEffect, useRef} from 'react';
 
 
 
-function Bars({ sortArray }) {
+function Bars({ sortArray, highlightBar }) {
   
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
@@ -35,6 +35,11 @@ function Bars({ sortArray }) {
         const bars = sortArray.map((number, idx) => {
           
           const actualHeight = Math.round(height*number/numBars);
+
+          // check if this bar should be highlighted
+          if (highlightBar.indexOf(idx) !== -1) {
+            return <li className='arrayBar highlighted' key={idx} style={{height: actualHeight+'px'}}></li>;  
+          }
 
           return <li className='arrayBar' key={idx} style={{height: actualHeight+'px'}}></li>;
           

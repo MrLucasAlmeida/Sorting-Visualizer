@@ -2,7 +2,7 @@ import React from 'react';
 import './Settings.css';
 import { useEffect } from 'react';
 
-function Settings({ sortArray, setSortArray }) {
+function Settings({ sortArray, setSortArray, highlightBar, setHighlightBar}) {
 
 
     let sleepTime = 20;
@@ -20,7 +20,6 @@ function Settings({ sortArray, setSortArray }) {
         const newArray = Array(size).fill(0).map((x, index) => {
             return index+2;
         });
-        console.log('generated new array');
         setSortArray(shuffle(newArray));
     }
 
@@ -61,78 +60,111 @@ function Settings({ sortArray, setSortArray }) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    function makeSettingsUnuseable() {
+        // grabs the elements
+        const slider = document.getElementById("myRange");
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const visualizeBtn = document.getElementById('visualize-btn');
+
+        //disables the elements
+        slider.disabled = true;
+        shuffleBtn.disabled = true;
+        visualizeBtn.disabled = true;
+
+        // show the user that the buttons can't be clicked
+        shuffleBtn.setAttribute('opacity','0');
+    }
+
+    function makeSettingsUsable() {
+        //grabs the elements
+        const slider = document.getElementById("myRange");
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const visualizeBtn = document.getElementById('visualize-btn');
+
+        //disables the elements
+        slider.disabled = false;
+        shuffleBtn.disabled = false;
+        visualizeBtn.disabled = false;
+
+        // return to normal
+    }
 
 
-    function handleSortSelection() {
+    async function handleSortSelection() {
         const yourSelect = document.getElementById('select-dropdown');
         const sortSelection = yourSelect.options[yourSelect.selectedIndex].value;
 
         const slider = document.getElementById("myRange");
         let sleepTime;
 
-        console.log(sortSelection);
-
+        makeSettingsUnuseable();
 
         switch (sortSelection) {
             case 'bubbleSort':
                 sleepTime = 10/Math.pow(Number(slider.value),2);
-                bubbleSort(sortArray,sleepTime);
+                await bubbleSort(sortArray,sleepTime);
                 break;
             case 'insertionSort':
                 sleepTime = 100/Math.pow(Number(slider.value),4);
-                insertionSort(sortArray,sleepTime);
+                await insertionSort(sortArray,sleepTime);
                 break;
             case 'selectionSort':
                 sleepTime = 1000/Math.pow(Number(slider.value),1);
-                selectionSort(sortArray,sleepTime);
+                await selectionSort(sortArray,sleepTime);
                 break;
             case 'quickSort':
                 sleepTime = 1/Math.pow(Number(slider.value),2);
-                quickSort(sortArray, 0, sortArray.length - 1,sleepTime);
+                await quickSort(sortArray, 0, sortArray.length - 1,sleepTime);
                 break;
             case 'mergeSort':
                 sleepTime = 400/Math.pow(Number(slider.value),1);
-                mergeSort(sortArray,sortArray,0,sortArray.length-1,sleepTime);
+                await mergeSort(sortArray,sortArray,0,sortArray.length-1,sleepTime);
                 break;
             case 'heapSort':
                 sleepTime = 5000/Math.pow(Number(slider.value),2);
-                heapSort(sortArray,sleepTime);
+                await heapSort(sortArray,sleepTime);
                 break;
             case 'countingSort':
                 sleepTime = 1000/Math.pow(Number(slider.value),1);
-                countingSort(sortArray,sleepTime);
+                await countingSort(sortArray,sleepTime);
                 break;
             case 'radixSort':
                 sleepTime = 500/Math.pow(Number(slider.value),1);
-                radixSort(sortArray,sleepTime);
+                await radixSort(sortArray,sleepTime);
                 break;
             case 'bucketSort':
                 sleepTime = 10000/Math.pow(Number(slider.value),2);
-                bucketSort(sortArray,sleepTime);
+                await bucketSort(sortArray,sleepTime);
                 break;
             case 'shellSort':
                 sleepTime = 1000/Math.pow(Number(slider.value),1);
-                shellSort(sortArray,sleepTime);
+                await shellSort(sortArray,sleepTime);
                 break;
             case 'cocktailSort':
                 sleepTime = 50000/Math.pow(Number(slider.value),3);
-                cocktailSort(sortArray,sleepTime);
+                await cocktailSort(sortArray,sleepTime);
                 break;
             case 'combSort':
-                combSort(sortArray,sleepTime);
+                sleepTime = 2000/Math.pow(Number(slider.value),1);
+                await combSort(sortArray,sleepTime);
                 break;
             case 'gnomeSort':
-                gnomeSort(sortArray,sleepTime);
+                sleepTime = 5000/Math.pow(Number(slider.value),2);
+                await gnomeSort(sortArray,sleepTime);
                 break;
             case 'cycleSort':
-                cycleSort(sortArray,sleepTime);
+                sleepTime = 1000/Math.pow(Number(slider.value),1);
+                await cycleSort(sortArray,sleepTime);
                 break;
             case 'pancakeSort':
-                pancakeSort(sortArray,sleepTime);
+                sleepTime = 5000000/Math.pow(Number(slider.value),5);
+                await pancakeSort(sortArray,sleepTime);
                 break;
             default:
                 break;
         }
+        setHighlightBar([-1,-1]);
+        makeSettingsUsable();
     }
 
 
@@ -155,6 +187,7 @@ function Settings({ sortArray, setSortArray }) {
             if (array[i] < pivotValue) {
                 await sleep(20000*sleepTime);
                 [array[i], array[pivotIndex]] = [array[pivotIndex], array[i]];
+                setHighlightBar([i,pivotIndex]);
                 setSortArray([...array]);
                 pivotIndex++;
             }
@@ -198,6 +231,7 @@ function Settings({ sortArray, setSortArray }) {
                 curr++;
                 p2++;
             }
+            setHighlightBar([curr,curr])
             setSortArray([...array]);
             await sleep(sleepTime);
             
@@ -208,12 +242,13 @@ function Settings({ sortArray, setSortArray }) {
             array[curr] = arr1[p1];
             curr++;
             p1++;
+            setHighlightBar([curr,curr])
         }
         while (p2<arr2.length) {
             array[curr] = arr2[p2];
             curr++;
             p2++;
-            
+            setHighlightBar([curr,curr])
         }
         await sleep(sleepTime);
         setSortArray([...array]);
@@ -232,11 +267,13 @@ function Settings({ sortArray, setSortArray }) {
     async function heapSort(array,sleepTime) {
         let n = array.length;
         for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+            setHighlightBar([i,i]);
             await heapify(array, n, i,sleepTime);
         }
         for (let i = n - 1; i > 0; i--) {
             await sleep(sleepTime);
             [array[0], array[i]] = [array[i], array[0]];
+            setHighlightBar([i,i]);
             setSortArray([...array]);
             await heapify(array, i, 0,sleepTime);
         }
@@ -268,6 +305,7 @@ function Settings({ sortArray, setSortArray }) {
                 if (array[j] > array[j + 1]) {
                     await sleep(sleepTime);
                     [array[j], array[j + 1]] = [array[j + 1], array[j]];
+                    setHighlightBar([i,j]);
                     setSortArray([...array]);
                 }
             }
@@ -284,10 +322,12 @@ function Settings({ sortArray, setSortArray }) {
             for (let j = i + 1; j < n; j++) {
                 if (array[j] < array[min]) {
                     min = j;
+                    setHighlightBar([i,j]);
                 }
             }
             await sleep(sleepTime);
             [array[i], array[min]] = [array[min], array[i]];
+            setHighlightBar([i,min]);
             setSortArray([...array]);
         }
     }
@@ -302,6 +342,7 @@ function Settings({ sortArray, setSortArray }) {
             while (j >= 0 && array[j] > key) {
                 await sleep(sleepTime);
                 array[j + 1] = array[j];
+                setHighlightBar([i,j]);
                 setSortArray([...array]);
                 j = j - 1;
             }
@@ -329,6 +370,7 @@ function Settings({ sortArray, setSortArray }) {
         for (let i = 0; i < n; i++) {
             await sleep(sleepTime);
             array[i] = output[i];
+            setHighlightBar([i,i]);
             setSortArray([...array]);
         }
     }
@@ -359,6 +401,7 @@ function Settings({ sortArray, setSortArray }) {
         for (let i = 0; i < n; i++) {
             await sleep(sleepTime);
             array[i] = output[i];
+            setHighlightBar([i,i]);
             setSortArray([...array]);
         }
     }
@@ -372,10 +415,12 @@ function Settings({ sortArray, setSortArray }) {
             buckets[i] = [];
         }
         for (let i = 0; i < n; i++) {
+            setHighlightBar([i,i]);
             let bucketIndex = Math.floor(array[i] / 10);
             buckets[bucketIndex].push(array[i]);
         }
         for (let i = 0; i < buckets.length; i++) {
+            setHighlightBar([i,i]);
             await insertionSortForBucketSort(buckets[i],sleepTime);
         }
         let index = 0;
@@ -383,6 +428,7 @@ function Settings({ sortArray, setSortArray }) {
             for (let j = 0; j < buckets[i].length; j++) {
                 await sleep(sleepTime);
                 array[index++] = buckets[i][j];
+                setHighlightBar([i,j]);
                 setSortArray([...array]);
             }
         }
@@ -395,6 +441,7 @@ function Settings({ sortArray, setSortArray }) {
             let j = i - 1;
             while (j >= 0 && array[j] > key) {
                 await sleep(sleepTime);
+                setHighlightBar([i,j]);
                 array[j + 1] = array[j];
                 j = j - 1;
             }
@@ -412,9 +459,11 @@ function Settings({ sortArray, setSortArray }) {
                 for (j = i; j >= gap && array[j - gap] > temp; j -= gap) {
                     await sleep(sleepTime);
                     array[j] = array[j - gap];
+                    setHighlightBar([i,j]);
                     setSortArray([...array]);
                 }
                 array[j] = temp;
+                setHighlightBar([i,j]);
                 setSortArray([...array]);
             }
         }
@@ -434,6 +483,7 @@ function Settings({ sortArray, setSortArray }) {
                     let temp = array[i];
                     array[i] = array[i + 1];
                     array[i + 1] = temp;
+                    setHighlightBar([start,end,i]);
                     setSortArray([...array]);
                     swapped = true;
                 }
@@ -450,6 +500,7 @@ function Settings({ sortArray, setSortArray }) {
                     let temp = array[i];
                     array[i] = array[i + 1];
                     array[i + 1] = temp;
+                    setHighlightBar([start,end,i]);
                     setSortArray([...array]);
                     swapped = true;
                 }
@@ -478,6 +529,7 @@ function Settings({ sortArray, setSortArray }) {
                     let temp = array[i];
                     array[i] = array[i + gap];
                     array[i + gap] = temp;
+                    setHighlightBar([i,i+gap]);
                     setSortArray([...array]);
                     swapped = true;
                 }
@@ -502,6 +554,7 @@ function Settings({ sortArray, setSortArray }) {
                 let temp = array[index];
                 array[index] = array[index - 1];
                 array[index - 1] = temp;
+                setHighlightBar([index,index]);
                 setSortArray([...array]);
                 index--;
             }
@@ -547,6 +600,7 @@ function Settings({ sortArray, setSortArray }) {
                     let temp = item;
                     item = array[pos];
                     array[pos] = temp;
+                    setHighlightBar([pos]);
                     setSortArray([...array]);
                 }
             }
@@ -565,6 +619,7 @@ function Settings({ sortArray, setSortArray }) {
                 if (array[j] > array[max]) {
                     max = j;
                 }
+                setHighlightBar([i,j]);
             }
             if (max !== i - 1) {
                 await flip(array, max,sleepTime);
@@ -580,6 +635,7 @@ function Settings({ sortArray, setSortArray }) {
 
             array[start] = array[i];
             array[i] = temp;
+            setHighlightBar([i]);
             setSortArray([...array]);
             start++;
             i--;
@@ -596,19 +652,19 @@ function Settings({ sortArray, setSortArray }) {
   return (
     <div className='navBar'>
         
-        <button onClick={() => generateNewArray(sortArray.length)}>Shuffle</button>
+        <button id='shuffle-btn' onClick={() => generateNewArray(sortArray.length)}>Shuffle</button>
         
         <input
             type='range'
             min='10'
             max='60'
             step='2'
-            defaultValue='30'
+            defaultValue='35'
             className='slider'
             onInput={() => handleSliderChange()}
             id='myRange'></input>
 
-        <button onClick={() => handleSortSelection()}>Visualize!</button>
+        <button id='visualize-btn' onClick={() => handleSortSelection()}>Visualize!</button>
 
         <div className='custom-select'>
         <select className='select' id='select-dropdown'>
