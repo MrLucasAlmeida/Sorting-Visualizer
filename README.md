@@ -1,4 +1,4 @@
-## Snake Game in React
+## Sorting Visualizer in React
 
 I wanted to learn about different sorting algorithms. Became interested from watching videos such as [this](https://www.youtube.com/watch?v=kPRA0W1kECg). Check out my Snake game at [https://mrlucasalmeida.github.io/Sorting-Visualizer/](https://mrlucasalmeida.github.io/Sorting-Visualizer/).
 
